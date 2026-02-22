@@ -11,6 +11,12 @@ importers:
       '@fastify/cors':
         specifier: ^10.0.0
         version: 10.1.0
+      drizzle-orm:
+        specifier: ^0.38.4
+        version: 0.38.4(@types/pg@8.16.0)(pg@8.18.0)
+      pg:
+        specifier: ^8.18.0
+        version: 8.18.0
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)
@@ -100,6 +106,12 @@ importers:
 
   worker:
     dependencies:
+      api:
+        specifier: workspace:*
+        version: link:../api
+      drizzle-orm:
+        specifier: ^0.38.0
+        version: 0.38.4(@types/pg@8.16.0)(pg@8.18.0)
       pg:
         specifier: ^8.13.0
         version: 8.18.0

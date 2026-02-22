@@ -71,6 +71,7 @@ export const chargeJobs = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
   },
   (table) => ({
     statusRunAtIdx: index("charge_jobs_status_run_at_idx").on(

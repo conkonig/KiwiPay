@@ -46,8 +46,17 @@ Monorepo: API (Fastify), Worker, Web (Vue 3).
 
 5. **Build**
 
+   From repo root, build everything (api is built before worker so worker gets the latest schema types):
+
    ```bash
    pnpm build
+   ```
+
+   Or build api then worker explicitly:
+
+   ```bash
+   pnpm --filter api build
+   pnpm --filter worker build
    ```
 
 6. **Lint**
@@ -84,6 +93,7 @@ Monorepo: API (Fastify), Worker, Web (Vue 3).
 | Run web only | `pnpm dev:web` |
 | Run tests | `pnpm test` |
 | Build all | `pnpm build` |
+| Build api then worker (schema shared from api) | `pnpm --filter api build && pnpm --filter worker build` |
 | Lint | `pnpm lint` |
 | Start Postgres (Docker) | `docker compose up -d postgres` |
 | Start full stack (Docker) | `docker compose up -d` |

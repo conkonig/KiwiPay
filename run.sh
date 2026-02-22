@@ -1,3 +1,7 @@
+# Build (api first so worker gets updated schema types from api/dist)
+pnpm --filter api build
+pnpm --filter worker build
+
 # Drizzle studio
 pnpm --filter api db:studio
 

@@ -57,6 +57,8 @@ export async function buildApp() {
       .update(JSON.stringify({ account_id, amount, currency }))
       .digest('hex')
 
+    const failEvent = request.headers['x-test-fail-event'] !== undefined;
+
     try {
       const { row, event } = await db.transaction(async (tx) => {
         const [row] = await tx
@@ -69,6 +71,9 @@ export async function buildApp() {
             requestHash,
           })
           .returning();
+        if (failEvent) {
+          throw new Error('x-test-fail-event: simulate event insert failure');
+        }
         const [event] = await tx
           .insert(chargeEvents)
           .values({

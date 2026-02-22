@@ -133,25 +133,26 @@ test('step 2) charge_events: with every charge created a charge event is created
     expect(body[0].status).toBe('PENDING')
 })
 
-test("step 2) If event insert fails, charge is not persisted", async () => {
+test('step 2) If event insert fails, charge is not persisted', async () => {
     const key = `key-${Math.random().toString(36).slice(2)}`
 
-    expect(true)
-    //   configure system so that event insert will fail
-    //   (example: pass special header, flag, or invalid status value)
+    const response = await app.inject({
+        method: 'POST',
+        url: '/charges',
+        headers: {
+            'x-test-fail-event': 'true',
+        },
+        payload: chargePayload({ idempotency_key: key }),
+    })
 
-    //   // Act
-    //   response = POST /charges with valid payload
+    // 1️⃣ API should fail
+    expect(response.statusCode).toBe(500)
 
-    //   // Assert 1: API should return error (500 or similar)
-    //   expect(response.statusCode).toBe(500)
+    // 2️⃣ Charge should NOT exist
+    const { rows } = await pool.query(
+        'SELECT * FROM charges WHERE idempotency_key = $1',
+        [key]
+    )
 
-    //   // Assert 2: charge row does NOT exist
-    //   rows = SELECT * FROM charges WHERE idempotency_key = that_key
-    //   expect(rows.length).toBe(0)
-
-    //   // Assert 3: no events exist
-    //   events = SELECT * FROM charge_events WHERE charge_id = <would-have-been-id>
-    //   expect(events.length).toBe(0)
-
+    expect(rows).toHaveLength(0)
 })

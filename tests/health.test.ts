@@ -20,8 +20,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-    // await pool.query('TRUNCATE TABLE charge_events, charges RESTART IDENTITY CASCADE')
-    // await pool.end()
+    await pool.query('TRUNCATE TABLE charge_events, charges RESTART IDENTITY CASCADE')
+    await pool.end()
 })
 
 const chargePayload = (overrides: Record<string, unknown> = {}) => ({
@@ -156,3 +156,22 @@ test('step 2) If event insert fails, charge is not persisted', async () => {
 
     expect(rows).toHaveLength(0)
 })
+
+test('step 3) charge_jobs: with every charge created a charge job is created with status PENDING', async () => {
+    const key = `key-${Math.random().toString(36).slice(2)}`
+    const payload = chargePayload({ amount: 1000, idempotency_key: key })
+    const response = await app.inject({
+        method: 'POST', url: '/charges', payload,
+    })
+    const chargeId = response.json().id
+    const response2 = await app.inject({
+        method: 'GET',
+        url: `/charges/${chargeId}/jobs`
+    })
+    expect(response2.statusCode).toBe(200)
+    const body = response2.json()
+    expect(Array.isArray(body)).toBe(true)
+    expect(body).toHaveLength(1)
+    expect(body[0].status).toBe('PENDING')
+})
+

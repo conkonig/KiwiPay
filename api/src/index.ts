@@ -1,10 +1,10 @@
 import { fileURLToPath } from "node:url";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import { charges, chargeEvents } from "./db/schema.js";
+import { charges, chargeEvents, chargeJobs } from "./db/schema.js";
 import { createHash } from "node:crypto";
 
 export async function buildApp() {
@@ -81,7 +81,15 @@ export async function buildApp() {
             status: "PENDING",
           })
           .returning();
-        return { row, event };
+        const [job] = await tx
+          .insert(chargeJobs)
+          .values({
+            type: "charge",
+            payload: { chargeId: row.id },
+            status: "PENDING",
+          })
+          .returning();
+        return { row, event, job };
       });
       return reply.status(201).send({ ...row, event });
     } catch (err: unknown) {
@@ -130,6 +138,19 @@ export async function buildApp() {
     const { id } = request.params;
     const result = await db.select().from(chargeEvents).where(eq(chargeEvents.chargeId, id));
     return result;
+  });
+
+  // GET /charges/:id/jobs — fetch charge jobs by charge id.
+  app.get<{ Params: { id: string } }>("/charges/:id/jobs", async (request, reply) => {
+    const { id } = request.params;
+    const result = await db
+      .select()
+      .from(chargeJobs)
+      .where(sql`${chargeJobs.payload}->>'chargeId' = ${id}`);
+    if (result.length === 0) {
+      return reply.status(404).send({ error: "Charge job not found", id });
+    }
+    return reply.send(result);
   });
 
   return { app, pool };

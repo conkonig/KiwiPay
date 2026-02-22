@@ -4,6 +4,7 @@ import {
   foreignKey,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -56,7 +57,32 @@ export const chargeEvents = pgTable(
   })
 );
 
+export const chargeJobs = pgTable(
+  "charge_jobs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    type: text("type").notNull(),
+    payload: jsonb("payload").notNull(),
+    status: text("status").notNull().default("PENDING"),
+    runAt: timestamp("run_at", { withTimezone: true }).notNull().defaultNow(),
+    attempts: integer("attempts").notNull().default(0),
+    lockedAt: timestamp("locked_at", { withTimezone: true }),
+    lockedBy: text("locked_by"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    statusRunAtIdx: index("charge_jobs_status_run_at_idx").on(
+      table.status,
+      table.runAt
+    ),
+  })
+);
+
 export type Charge = typeof charges.$inferSelect;
 export type NewCharge = typeof charges.$inferInsert;
 export type ChargeEvent = typeof chargeEvents.$inferSelect;
 export type NewChargeEvent = typeof chargeEvents.$inferInsert;
+export type ChargeJob = typeof chargeJobs.$inferSelect;
+export type NewChargeJob = typeof chargeJobs.$inferInsert;

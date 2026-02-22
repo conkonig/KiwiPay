@@ -15,6 +15,13 @@
       "when": 1771786923812,
       "tag": "0001_closed_angel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771792094076,
+      "tag": "0002_silly_bushwacker",
+      "breakpoints": true
     }
   ]
 }

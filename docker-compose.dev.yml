@@ -1,0 +1,12 @@
+# Override for local development: mount source and run dev watchers.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# Or:   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  api:
+    volumes:
+      - ./api:/app/api
+    working_dir: /app
+    command: ["pnpm", "--filter", "api", "dev"]
+    environment:
+      NODE_ENV: development

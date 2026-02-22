@@ -1,0 +1,12 @@
+node_modules
+api/node_modules
+worker/node_modules
+web/node_modules
+dist
+api/dist
+worker/dist
+web/dist
+.env
+.env.*
+.git
+*.log

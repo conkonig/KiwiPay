@@ -1,0 +1,18 @@
+Smartpay Interview Prep
+https://chatgpt.com/c/6998738d-769c-832c-ba8e-9b8225dd5764
+
+FINTECH INTERVIEW - MINI PAYMENT PLATFORM - Google Docs
+https://docs.google.com/document/d/1yGzbfCv-aR_24OjvZwo14JsKEIT4tEef52Rj8qCGXJE/edit?tab=t.0
+
+Components Basics | Vue.js
+https://vuejs.org/guide/essentials/component-basics.html
+
+KiwiPay Dashboard
+http://localhost:5173/
+
+localhost:3000/charges
+http://localhost:3000/charges
+
+Drizzle Studio
+https://local.drizzle.studio/
+
